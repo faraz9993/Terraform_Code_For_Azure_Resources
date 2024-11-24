@@ -1,0 +1,5 @@
+name                 = "sa18swapd"
+resource_group_name  = "sa1_dev_eic_ip_implementation"
+node_resource_group  = "sa1_dev_eic_ip_implementation"
+dns_prefix           = "sa18swapd-dns"
+node_pool_name       = "evwer"

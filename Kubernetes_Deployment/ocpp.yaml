@@ -1,0 +1,47 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+    app: ocpp
+  name: ocpp-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ocpp
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: ocpp
+    spec:
+      imagePullSecrets:
+      - name: acr-secret
+      containers:
+        - image: sa1acrind.azurecr.io/ocpp:latest
+          name: ocpp
+          imagePullPolicy: Always
+          ports:
+          - containerPort: 8084
+          resources: {}
+status: {}
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  creationTimestamp: null
+  labels:
+    app: ocpp
+  name: ocpp-service
+spec:
+  type: ClusterIP
+  ports:
+    - port: 80
+      protocol: TCP
+      targetPort: 8084
+  selector:
+    app: ocpp
+status: {}

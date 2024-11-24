@@ -1,0 +1,47 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+    app: schedule
+  name: schedule-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: schedule
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: schedule
+    spec:
+      imagePullSecrets:
+      - name: acr-secret
+      containers:
+      - image: sa1acrind.azurecr.io/schedule:latest
+        name: schedule
+        imagePullPolicy: Always
+        ports:
+          - containerPort: 8085
+        resources: {}
+status: {}
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  creationTimestamp: null
+  labels:
+    app: schedule
+  name: schedule-service
+spec:
+  type: ClusterIP
+  ports:
+    - port: 80
+      protocol: TCP
+      targetPort: 8085
+  selector:
+    app: schedule
+status: {}

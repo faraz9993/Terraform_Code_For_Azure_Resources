@@ -1,0 +1,148 @@
+pipeline {
+    agent {
+        label 'master'
+    }
+    
+    tools {
+        maven 'maven'
+    }
+    
+    environment {
+        
+        REGISTRY_URL = 'sa1acrind.azurecr.io'
+        REGISTRY_CREDENTIAL = 'evwercredentials_ACR' 
+        RESOURCE_GROUP = 'sa1_dev_eic_ip_implementation'
+        CLUSTER_NAME = 'sa18swapd'
+        KUBECONFIG_PATH = 'kubeconfig'
+        ARM_CREDENTIALS_ID = 'azure-service'
+        ARM_CLIENT_ID_NEW = '534a57b8-1c90-47ab-b8a0-0ad92def00f6'
+        ARM_CLIENT_SECRET_NEW = 'LqN8Q~mkKoeeZFRygJnPVLBrcWGh3hXZtgrSqcJc'
+        ARM_TENANT_ID_NEW = '0adb040b-ca22-4ca6-9447-ab7b049a22ff'
+    }
+    
+     stages {
+    
+
+        stage('Checkout') {
+            steps {
+                
+                git branch: 'DevOps_activity_2', credentialsId: 'Faraz_Ansari_Bitbucket_Password', url: 'https://farajansari@bitbucket.org/arrowit/ev-ip-implementation.git'
+
+                sh """
+                git config --global user.name "farajansari"
+                git config --global user.email "faraj.ansari@einfochips.com"
+                git config --global credential.helper store
+                sed -i 's|var.zookeeper.connect|${zookeeper_connect_ksp}|g' devops/Dokerfile/server.properties
+                sed -i 's|var.advertised.listeners|${advertised_listeners_ksp}|g' devops/Dokerfile/server.properties
+                """
+               
+                sh """
+                git config --global user.name "farajansari"
+                git config --global user.email "faraj.ansari@einfochips.com"
+                git config --global credential.helper store
+                sed -i 's|var.db-username|${db_username_kc}|g' devops/Dokerfile/keycloak.conf
+                sed -i 's|var.db-password|${db_password_kc}|g' devops/Dokerfile/keycloak.conf
+                sed -i 's|var.db-url|${db_url_kc}|g' devops/Dokerfile/keycloak.conf
+                sed -i 's|var.dns-name|${dns_name}|g' devops/AKS-Deployments/keycloak-deployment.yaml
+                """
+            }
+        }
+
+
+        stage('Build Docker Images') {
+            steps {
+            dir('devops/Dokerfile') {
+                script {
+                      sh 'pwd'
+                    // Define your images and their respective Dockerfiles here
+                    def images = [
+                         [name: 'zookeeper', dockerfile: 'zookeeper.Dockerfile'],
+                         [name: 'kafka', dockerfile: 'kafka.Dockerfile'],
+                         [name: 'keycloak', dockerfile: 'Dockerfile.keycloak'],
+                         [name: 'redis', dockerfile: 'redis.Dockerfile'],
+                         [name: 'nginx', dockerfile: 'Dockerfile.nginx'],
+                    ]
+                    
+                    images.each { img ->
+                        def imageName = "${REGISTRY_URL}/${img.name}:${env.BUILD_ID}"
+                        docker.build(imageName, "-f ${img.dockerfile} .").push()
+
+
+                        }
+                    }
+                }
+            }
+        }
+        stage('Login to AKS') {
+            steps {
+          script {
+            withCredentials([azureServicePrincipal(credentialsId: ARM_CREDENTIALS_ID)]) {
+                sh "az login --service-principal -u \$ARM_CLIENT_ID_NEW -p \$ARM_CLIENT_SECRET_NEW --tenant \$ARM_TENANT_ID_NEW"
+            }
+            
+            
+            def subscriptionId = '664b6097-19f2-42a3-be95-a4a6b4069f6b' 
+            sh "az account set --subscription ${subscriptionId}"
+
+            sh "az aks get-credentials --resource-group ${RESOURCE_GROUP} --name ${CLUSTER_NAME} --overwrite-existing"
+
+            }
+        }
+    }
+
+
+    
+         
+        stage('Deploy to AKS') {
+          steps {
+           dir('devops/AKS-Deployments') {
+           script {
+            echo "Current Directory: ${pwd()}"
+            echo "Contents of Directory:"
+            sh 'ls -la'
+
+            
+                sh '''
+                   sed -i "s|sa1acrind.azurecr.io/zookeeper:.*|sa1acrind.azurecr.io/zookeeper:${BUILD_ID}|g" zookeeper-deployment.yaml
+                   sed -i "s|sa1acrind.azurecr.io/kafka:.*|sa1acrind.azurecr.io/kafka:${BUILD_ID}|g" kafka-deployment.yaml
+                   sed -i "s|sa1acrind.azurecr.io/keycloak:.*|sa1acrind.azurecr.io/keycloak:${BUILD_ID}|g" keycloak-deployment.yaml
+                   sed -i "s|sa1acrind.azurecr.io/redis:.*|sa1acrind.azurecr.io/redis:${BUILD_ID}|g" redis-deployment.yaml
+                   sed -i "s|sa1acrind.azurecr.io/nginx:.*|sa1acrind.azurecr.io/nginx:${BUILD_ID}|g" nginx-ingress.yaml
+                '''
+
+           
+                        echo "Executing kubectl apply commands..."
+                        sh '''
+                        kubectl apply -f zookeeper-deployment.yaml
+                        
+                        '''
+                    }
+                }
+            }
+        }
+        
+        stage('Delay') {
+            steps {
+                echo "Waiting for 1 minute..."
+                sh 'sleep 60'
+            }
+        }
+        
+        stage('Deploy Kafka') {
+            steps {
+                script {
+                    dir('devops/AKS-Deployments') {
+                        echo "Executing kubectl apply for Kafka..."
+                        sh '''
+                        kubectl apply -f kafka-deployment.yaml
+                        
+                        kubectl apply -f keycloak-deployment.yaml
+                       
+                        kubectl apply -f redis-deployment.yaml
+                     '''
+             }
+        }
+    }
+}
+    }
+}

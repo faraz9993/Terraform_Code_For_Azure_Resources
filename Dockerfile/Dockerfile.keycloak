@@ -1,0 +1,51 @@
+# Use an official OpenJDK runtime as a parent image
+FROM ubuntu:latest
+
+# Install required packages
+RUN apt-get update && apt-get install -y wget unzip openssl openjdk-17-jdk
+
+# Download and extract Keycloak
+RUN wget -q "https://github.com/keycloak/keycloak/releases/download/24.0.1/keycloak-24.0.1.zip" -O /tmp/keycloak-24.0.1.zip
+RUN unzip /tmp/keycloak-24.0.1.zip -d /opt
+RUN mv /opt/keycloak-24.0.1 /opt/keycloak
+RUN rm /tmp/keycloak-24.0.1.zip
+
+# Navigate to the conf directory
+WORKDIR /opt/keycloak/conf
+
+# Generate self-signed certificate
+RUN openssl req -newkey rsa:2048 -nodes -keyout keycloak-server.key.pem -x509 -days 3650 -out keycloak-server.crt.pem -subj "/C=IN/ST=GJ/L=AHD/O=EIC/OU=PES"
+
+# Create a configuration file named 'keycloak.conf' with the specified content
+RUN echo -e '\ndb=mssql\ndb-username=devevweruser\ndb-password=q%VRwXZ1U_Sa627d\ndb-url=jdbc:sqlserver://sa1psswsdd.database.windows.net:1433;database=dev-evwer-keycloak;encrypt=true;trustServerCertificate=true;\nhttps-certificate-file=/opt/keycloak/conf/keycloak-server.crt.pem\nhttps-certificate-key-file=/opt/keycloak/conf/keycloak-server.key.pem\ntransaction-xa-enabled=false' >> keycloak.conf
+#creating a keycloak log folder
+#WORKDIR /var
+RUN mkdir -p /data/log/
+# Navigate to the bin directory
+WORKDIR /opt/keycloak/bin
+
+# Edit standalone.sh to specify the Java VM path
+#RUN sed -i '83s/.*/JAVA="\/home\/evwereic\/java\/jdk-11\/bin\/java"/' standalone.sh
+
+# Set environment variables in bashrc
+#RUN echo 'export KEYCLOAK_ADMIN=admin' >> ~/.bashrc && \
+#    echo 'export KEYCLOAK_ADMIN_PASSWORD=admin' >> ~/.bashrc
+
+# Source the bashrc file
+RUN /bin/bash -c "source ~/.bashrc"
+
+# Expose Keycloak port
+EXPOSE 8080
+
+#COPY keycloak.conf /opt/keycloak/conf/keycloak.conf
+
+#Fetching the jars from target
+#ADD keycloak-server.crt.pem /opt/keycloak/conf/keycloak-server.crt.pem
+#ADD keycloak-server.key.pem /opt/keycloak/conf/keycloak-server.key.pem
+
+# Start Keycloak
+#CMD ["./standalone.sh", "-b", "0.0.0.0"]
+#CMD ["start-dev", "-b", "0.0.0.0"]
+#ENTRYPOINT ["/opt/keycloak/bin/kc.sh"]
+CMD ["pwd"]
+CMD ["/opt/keycloak/bin/kc.sh","start-dev"]

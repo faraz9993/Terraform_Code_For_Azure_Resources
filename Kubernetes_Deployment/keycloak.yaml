@@ -1,0 +1,56 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: keycloak
+  name: keycloak-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: keycloak
+  template:
+    metadata:
+      labels:
+        app: keycloak
+    spec:
+      containers:
+      - name: keycloak-deployment
+        image: sa1acrind.azurecr.io/keycloak:latest
+        imagePullPolicy: Always
+        command: ["/opt/keycloak/bin/kc.sh","start-dev", "--hostname-path=/keycloak", "--hostname-admin-url=http://farazaks.southeastasia.cloudapp.azure.com/keycloak", "--proxy-headers=xforwarded", "--hostname-strict=false"]
+        env:
+        - name: KEYCLOAK_ADMIN
+          value: "admin"
+        - name: KEYCLOAK_ADMIN_PASSWORD
+          value: "admin"
+        resources:
+          limits:
+            memory: 512Mi
+            cpu: "500m"
+          requests:
+            memory: 256Mi
+            cpu: "250m"
+        ports:
+        - containerPort: 8080
+      imagePullSecrets:
+      - name: acr-secret
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  creationTimestamp: null
+  labels:
+    app: keycloak
+  name: keycloak-service
+spec:
+  type: NodePort
+  ports:
+    - port: 80
+      protocol: TCP
+      targetPort: 8080
+      nodePort: 31482
+  selector:
+    app: keycloak
+status: {}

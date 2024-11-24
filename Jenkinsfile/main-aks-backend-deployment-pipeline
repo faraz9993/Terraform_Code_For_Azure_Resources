@@ -1,0 +1,252 @@
+node ('master'){
+    cleanWs()
+    environment { 
+        REGISTRY_URL = 'sa1acrind.azurecr.io'    
+        DOCKERHUB_CREDENTIALS = credentials('evwercredentials_ACR')
+        REGISTRY_CREDENTIAL = 'evwercredentials_ACR' // Credential ID for ACR in Jenkins
+        RESOURCE_GROUP = 'sa1_dev_eic_ip_implementation'
+        CLUSTER_NAME = 'sa18swapd'
+        KUBECONFIG_PATH = 'kubeconfig'
+        ARM_CREDENTIALS_ID = 'evwer-azure'
+        ARM_CLIENT_ID_NEW = '534a57b8-1c90-47ab-b8a0-0ad92def00f6'
+        ARM_CLIENT_SECRET_NEW = 'LqN8Q~mkKoeeZFRygJnPVLBrcWGh3hXZtgrSqcJc'
+        ARM_TENANT_ID_NEW = '0adb040b-ca22-4ca6-9447-ab7b049a22ff'
+    } 
+
+    stage ('Changing values for all the properties files') {
+        git branch: 'DevOps_activity_2', credentialsId: 'Faraz_Ansari_Bitbucket_Password', url: 'https://farajansari@bitbucket.org/arrowit/ev-ip-implementation.git'
+        
+        sh """
+            git config --global user.name "farajansari"
+            git config --global user.email "faraj.ansari@einfochips.com"
+            git config --global credential.helper store
+            sed -i 's|var.evwer.ocpp.host|${evwer_ocpp_host_cp}|g' devops/Dokerfile/common.properties
+            sed -i 's|var.azure.sql.db.name|${azure_sql_db_name_cp}|g' devops/Dokerfile/common.properties
+            sed -i 's|var.evwer.keycloak.realm.name|${evwer_keycloak_realm_name_cp}|g' devops/Dokerfile/common.properties
+            sed -i 's|var.evwer.keycloak.client.name|${evwer_keycloak_client_name_cp}|g' devops/Dokerfile/common.properties
+            sed -i 's|var.evwer.ftp.hostname|${evwer_ftp_hostname_cp}|g' devops/Dokerfile/common.properties
+            sed -i 's|var.evwer.ftp.firmware.root.path|${evwer_ftp_firmware_root_path_cp}|g' devops/Dokerfile/common.properties
+            sed -i 's|var.evwer.ftp.diagostic.root.path|${evwer_ftp_diagostic_root_path_cp}|g' devops/Dokerfile/common.properties
+            sed -i 's|var.spring.kafka.producer.bootstrap-servers|${spring_kafka_producer_bootstrap_servers_cp}|g' devops/Dokerfile/common.properties
+            sed -i 's|var.spring.kafka.consumer.group-id|${spring_kafka_consumer_group_id_cp}|g' devops/Dokerfile/common.properties
+            sed -i 's|var.spring.kafka.bootstrap-servers|${spring_kafka_bootstrap_servers_cp}|g' devops/Dokerfile/common.properties
+            sed -i 's|var.spring.kafka.consumer.bootstrap-servers|${spring_kafka_consumer_bootstrap_servers_cp}|g' devops/Dokerfile/common.properties
+            sed -i 's|var.evwer.kafka.backend.topic|${evwer_kafka_backend_topic_cp}|g' devops/Dokerfile/common.properties
+            sed -i 's|var.evwer.kafka.ocpp.topic|${evwer_kafka_ocpp_topic_cp}|g' devops/Dokerfile/common.properties
+            sed -i 's|var.evwer.redis.host.name|${evwer_redis_host_name_cp}|g' devops/Dokerfile/common.properties
+            sed -i 's|var.evwer.redis.enable|${evwer_redis_enable_cp}|g' devops/Dokerfile/common.properties
+            sed -i 's|var.backend.server.host|${backend_server_host_cp}|g' devops/Dokerfile/common.properties
+            sed -i 's|var.ven.server.host|${ven_server_host_cp}|g' devops/Dokerfile/common.properties
+            sed -i 's|var.ven.ssl.cert.path|${ven_ssl_cert_path_cp}|g' devops/Dokerfile/common.properties
+        """
+
+        sh """
+            git config --global user.name "farajansari"
+            git config --global user.email "faraj.ansari@einfochips.com"
+            git config --global credential.helper store
+            sed -i 's|var.evwer.keycloak.base.url|${evwer_keycloak_base_url_ap}|g' devops/Dokerfile/application.properties
+            """
+        
+        sh """
+            git config --global user.name "farajansari"
+            git config --global user.email "faraj.ansari@einfochips.com"
+            git config --global credential.helper store
+            sed -i 's|var.server.ssl.key-store|${server_ssl_key_store_oap}|g' devops/Dokerfile/openadr-application.properties
+            sed -i 's|var.azure.sql.db.name|${azure_sql_db_name_oap}|g' devops/Dokerfile/openadr-application.properties
+            sed -i 's|var.evwer.backend.base.path|${evwer_backend_base_path_oap}|g' devops/Dokerfile/openadr-application.properties
+            """
+        sh """
+            mkdir Jar_files
+            cp devops/Jar_files/OCPP-J-1.2.0.jar Jar_files/
+            cp devops/Jar_files/common-1.2.0.jar Jar_files/
+            cp devops/Jar_files/ocpp-v2-1.2.0.jar Jar_files/
+        """
+        
+        stage ('git checkout for Docker files') {        
+           dir('docker') {
+        git branch: 'api-development', credentialsId: 'Faraz_Ansari_Bitbucket_Password', url: 'https://farajansari@bitbucket.org/arrowit/ev-ip-implementation.git'
+        }
+        
+    stage ('Copying Jar Files from temporary folder to the libs folder')
+        sh """
+        mkdir -p /var/lib/jenkins/workspace/main-aks-backend-deployment-pipieline/docker/API/evwer/ocpp-v2-core/ocpp-v2-core-services/ocpp-v2-core-cache-service/libs/eu/chargetime/ocpp/v2/common/1.2.0
+        mkdir -p /var/lib/jenkins/workspace/main-aks-backend-deployment-pipieline/docker/API/evwer/ocpp-v2-core/ocpp-v2-core-services/ocpp-v2-core-cache-service/libs/eu/chargetime/ocpp/v2/OCPP-J/1.2.0
+        mkdir -p /var/lib/jenkins/workspace/main-aks-backend-deployment-pipieline/docker/API/evwer/ocpp-v2-core/ocpp-v2-core-services/ocpp-v2-core-cache-service/libs/eu/chargetime/ocpp/v2/ocpp-v2/1.2.0
+    
+        cp Jar_files/common-1.2.0.jar /var/lib/jenkins/workspace/Faraz-Test-main-aks-backend-deployment-pipieline/docker/API/evwer/ocpp-v2-core/ocpp-v2-core-services/ocpp-v2-core-cache-service/libs/eu/chargetime/ocpp/v2/common/1.2.0
+        cp Jar_files/OCPP-J-1.2.0.jar /var/lib/jenkins/workspace/Faraz-Test-main-aks-backend-deployment-pipieline/docker/API/evwer/ocpp-v2-core/ocpp-v2-core-services/ocpp-v2-core-cache-service/libs/eu/chargetime/ocpp/v2/OCPP-J/1.2.0
+        cp Jar_files/ocpp-v2-1.2.0.jar /var/lib/jenkins/workspace/Faraz-Test-main-aks-backend-deployment-pipieline/docker/API/evwer/ocpp-v2-core/ocpp-v2-core-services/ocpp-v2-core-cache-service/libs/eu/chargetime/ocpp/v2/ocpp-v2/1.2.0
+        
+        chmod 777 -R /var/lib/jenkins/workspace/Faraz-Test-main-aks-backend-deployment-pipieline/docker/API/evwer/ocpp-v2-core/ocpp-v2-core-services/ocpp-v2-core-cache-service/libs/
+        
+        """
+
+    stage('Creating jars for Evwer') {
+        dir('docker/API/evwer') {
+        script {
+        def mvn_version = 'maven'
+        withEnv( ["PATH+MAVEN=${tool mvn_version}/bin"] ) {
+            sh '''
+            pwd
+            ls
+            export JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64
+            mvn --version
+            mvn clean install
+            '''
+                }
+            }
+        }
+    }
+    stage('Creating jars for open-adr') {
+        dir('docker/API/openadr') {
+        script {
+        def mvn_version = 'maven'
+        withEnv( ["PATH+MAVEN=${tool mvn_version}/bin"] ) {
+            sh '''
+            pwd
+            ls
+            export JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64
+            mvn --version
+            mvn clean install
+            '''
+                }
+            }
+        }
+    }
+    stage('Create jars backup') {
+        script {
+            sh '''
+            ls -l /var/lib/jenkins/workspace/main-aks-backend-deployment-pipieline/docker/API/evwer/evwer-mediator/backend-web-server/target/
+            ls -l /var/lib/jenkins/workspace/main-aks-backend-deployment-pipieline/docker/API/evwer/evwer-mediator/schedule-server/target/
+            ls -l /var/lib/jenkins/workspace/main-aks-backend-deployment-pipieline/docker/API/evwer/evwer-mediator/ocpp-server/target/
+            ls -l /var/lib/jenkins/workspace/main-aks-backend-deployment-pipieline/docker/API/evwer/evwer-mediator/ocpp-v2-server/target/
+            ls -l /var/lib/jenkins/workspace/main-aks-backend-deployment-pipieline/docker/API/openadr/OpenADR-Ven-Application/target/
+            
+            cp /var/lib/jenkins/workspace/main-aks-backend-deployment-pipieline/docker/API/evwer/evwer-mediator/backend-web-server/target/backend-web-server-1.0.0.jar .
+            cp /var/lib/jenkins/workspace/main-aks-backend-deployment-pipieline/docker/API/evwer/evwer-mediator/schedule-server/target/schedule-server-1.0.0.jar .
+            cp /var/lib/jenkins/workspace/main-aks-backend-deployment-pipieline/docker/API/evwer/evwer-mediator/ocpp-server/target/ocpp-application-1.0.0.jar .
+            cp /var/lib/jenkins/workspace/Faraz-Test-main-aks-backend-deployment-pipieline/docker/API/evwer/evwer-mediator/ocpp-v2-server/target/ocpp-v2-application-1.0.0.jar .
+            cp /var/lib/jenkins/workspace/main-aks-backend-deployment-pipieline/docker/API/openadr/OpenADR-Ven-Application/target/openadr-server-1.0.0.jar .
+            
+            '''
+        }
+     }
+    stage('Copy docker files') {
+       script {
+           sh '''
+           pwd
+           mv ./docker/API/evwer/evwer-mediator/backend-web-server/target/backend.Dockerfile .
+           mv ./docker/API/evwer/evwer-mediator/ocpp-server/target/ocpp.Dockerfile .
+           mv ./docker/API/evwer/evwer-mediator/ocpp-v2-server/target/ocpp-v2.Dockerfile .
+           mv ./docker/API/evwer/evwer-mediator/schedule-server/target/schedule.Dockerfile .
+           mv ./docker/API/openadr/OpenADR-Ven-Application/target/openadr.Dockerfile .
+          
+           '''
+       }
+  }
+     stage('Login to Azure') {
+         script {
+             sh '''
+                az login --service-principal -u 534a57b8-1c90-47ab-b8a0-0ad92def00f6 -p LqN8Q~mkKoeeZFRygJnPVLBrcWGh3hXZtgrSqcJc -t 0adb040b-ca22-4ca6-9447-ab7b049a22ff
+                 az account show
+             '''
+         }
+     }
+     stage('Login to aks cluster') {
+         script {
+             sh '''
+                 az account set --subscription $ARM_SUBSCRIPTION_ID
+                 az aks get-credentials --resource-group sa1_dev_eic_ip_implementation --name sa18swapd --overwrite-existing
+                 kubectl get deployments --all-namespaces=true
+             '''
+         }
+     }
+     stage('Login to ACR') {
+         script {
+             withCredentials([usernamePassword(credentialsId: 'evwercredentials_ACR', passwordVariable: 'DOCKERHUB_CREDENTIALS_PSW', usernameVariable: 'DOCKERHUB_CREDENTIALS_USR')]) {
+                 sh "echo \"$DOCKERHUB_CREDENTIALS_PSW\" | docker login -u $DOCKERHUB_CREDENTIALS_USR --password-stdin sa1acrind.azurecr.io"
+             }
+         }
+     }
+    
+    stage('Create Docker images') {
+        dir('/var/lib/jenkins/workspace/main-aks-backend-deployment-pipieline/') {
+        script {
+            sh '''
+            cp /var/lib/jenkins/workspace/main-aks-backend-deployment-pipieline/devops/Dokerfile/application.properties .
+            cp /var/lib/jenkins/workspace/main-aks-backend-deployment-pipieline/devops/Dokerfile/common.properties .
+            cp /var/lib/jenkins/workspace/main-aks-backend-deployment-pipieline/devops/Dokerfile/TEST_RSA_VTN_221108072945_cert.p12 .
+            cp /var/lib/jenkins/workspace/main-aks-backend-deployment-pipieline/devops/Dokerfile/ocpp-application.properties .
+            cp /var/lib/jenkins/workspace/main-aks-backend-deployment-pipieline/devops/Dokerfile/ocpp-v2-application.properties .
+            cp /var/lib/jenkins/workspace/main-aks-backend-deployment-pipieline/devops/Dokerfile/scheduler-application.properties .
+            cp /var/lib/jenkins/workspace/main-aks-backend-deployment-pipieline/devops/Dokerfile/openadr-application.properties .
+            cp /var/lib/jenkins/workspace/main-aks-backend-deployment-pipieline/devops/Dokerfile/truststore.jks .
+            cp -r /var/lib/jenkins/workspace/main-aks-backend-deployment-pipieline/devops/Dokerfile/certificates .
+            ls
+            pwd
+//             docker build -f backend.Dockerfile -t backend:${BUILD_NUMBER} .
+//             docker build -f ocpp.Dockerfile -t ocpp:${BUILD_NUMBER} .
+//             docker build -f ocpp-v2.Dockerfile -t ocpp-v2:${BUILD_NUMBER} .
+//             docker build -f schedule.Dockerfile -t schedule:${BUILD_NUMBER} .
+//             docker build -f openadr.Dockerfile -t openadr:${BUILD_NUMBER} .
+             
+//             docker image ls
+            '''
+            }
+        }
+    }
+    
+stage('Build Docker Images') {
+    script {
+        dir('/var/lib/jenkins/workspace/main-aks-backend-deployment-pipieline/') {
+            
+            def images = [
+                [name: 'backend', dockerfile: 'backend.Dockerfile'],
+                [name: 'ocpp', dockerfile: 'ocpp.Dockerfile'],
+                [name: 'ocpp-v2', dockerfile: 'ocpp-v2.Dockerfile'],
+                [name: 'schedule', dockerfile: 'schedule.Dockerfile'],
+                [name: 'openadr', dockerfile: 'openadr.Dockerfile'],
+                
+            ]
+            
+            images.each { img ->
+                def imageName = "sa1acrind.azurecr.io/${img.name}:${env.BUILD_ID}"
+                sh "docker build -t ${imageName} -f ${img.dockerfile} ."
+                sh "docker push ${imageName}"
+            }
+        }
+    }
+}
+
+
+
+    stage('Update pods') {
+        dir('devops/AKS-Deployments') {
+        script {
+              
+              echo "Current Directory: ${pwd()}"
+              echo "Contents of Directory:"
+              sh 'ls -la'
+
+            
+                sh '''
+                   sed -i "s|sa1acrind.azurecr.io/backend:.*|sa1acrind.azurecr.io/backend:${BUILD_ID}|g" backend-deployment.yaml
+                   sed -i "s|sa1acrind.azurecr.io/ocpp:.*|sa1acrind.azurecr.io/ocpp:${BUILD_ID}|g" ocpp-deployment.yaml
+                   sed -i "s|sa1acrind.azurecr.io/ocpp-v2:.*|sa1acrind.azurecr.io/ocpp-v2:${BUILD_ID}|g" ocpp-v2-deployment.yaml
+                   sed -i "s|sa1acrind.azurecr.io/schedule:.*|sa1acrind.azurecr.io/schedule:${BUILD_ID}|g" schedular-deployment.yaml
+                   sed -i "s|sa1acrind.azurecr.io/openadr:.*|sa1acrind.azurecr.io/openadr:${BUILD_ID}|g" openadr-deployment.yaml
+                   '''
+
+                sh 'kubectl apply -f backend-deployment.yaml'
+                sh 'kubectl apply -f ocpp-deployment.yaml'
+                sh 'kubectl apply -f ocpp-v2-deployment.yaml'
+                sh 'kubectl apply -f ocpp-v2-service.yaml'
+                sh 'kubectl apply -f schedular-deployment.yaml'
+                sh 'kubectl apply -f openadr-deployment.yaml'
+            }
+        }
+    }
+}
+
+}
+}

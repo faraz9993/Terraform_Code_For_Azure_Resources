@@ -1,0 +1,30 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: faraz-openadr-ingress
+  namespace: faraz-dev-evwer
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /$2
+    nginx.ingress.kubernetes.io/backend-protocol: "HTTPS"
+    nginx.ingress.kubernetes.io/auth-tls-pass-certificate-to-upstream: "true"
+    nginx.ingress.kubernetes.io/auth-tls-secret: faraz-dev-evwer/faraz-dns-secret
+    nginx.ingress.kubernetes.io/auth-tls-verify-client: "optional"
+    nginx.ingress.kubernetes.io/auth-tls-verify-depth: "1"
+
+spec:
+  tls:
+  - hosts: 
+    - "farazaks.southeastasia.cloudapp.azure.com"
+    secretName: openadr-mtls-secret
+  ingressClassName: nginx
+  rules:
+    - host: "farazaks.southeastasia.cloudapp.azure.com"
+      http:
+        paths:
+        - path: /openadr(/|$)(.*)
+          pathType: Prefix
+          backend:
+            service:
+              name: f-openadr-service
+              port:
+                number: 443

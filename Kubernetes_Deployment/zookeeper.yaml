@@ -1,0 +1,47 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+    app: zookeeper
+  name: zookeeper-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: zookeeper
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: zookeeper
+    spec:
+      imagePullSecrets:
+      - name: acr-secret
+      containers:
+      - image: sa1acrind.azurecr.io/zookeeper:latest
+        name: zookeeper
+        imagePullPolicy: Always
+        ports:
+          - containerPort: 2181
+        resources: {}
+status: {}
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  creationTimestamp: null
+  labels:
+    app: zookeeper
+  name: zookeeper-service
+spec:
+  type: ClusterIP
+  ports:
+    - port: 2181
+      protocol: TCP
+      targetPort: 2181
+  selector:
+    app: zookeeper
+status: {}
