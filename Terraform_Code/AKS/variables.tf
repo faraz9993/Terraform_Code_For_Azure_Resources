@@ -1,7 +1,7 @@
 variable "subscription_id" {
   description = "Azure Subscription ID"
   type        = string
-  default     = "664b6097-19f2-42a3-be95-a4a6b4069f6b"
+  default     = "XXXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXX"
 }
 
 variable "automatic_upgrade_channel" {
@@ -25,7 +25,7 @@ variable "cost_analysis_enabled" {
 variable "dns_prefix" {
   description = "set varible to use specific version,insted of lattest one"
   type        = string
-  default     = "sa18swapd-dns"
+  default     = "faraz-dns"
 }
 
 variable "http_application_routing_enabled" {
@@ -97,7 +97,7 @@ variable "private_cluster_public_fqdn_enabled" {
 variable "resource_group_name" {
   description = "Name of the resource group"
   type        = string
-  default     = "sa1_dev_eic_ip_implementation"
+  default     = "sa1_test_eic_FarajAnsari"
 }
 
 variable "role_based_access_control_enabled" {

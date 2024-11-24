@@ -10,7 +10,7 @@ variable "name" {
 
 variable "subscription_id" {
   type        = string
-  default     = "664b6097-19f2-42a3-be95-a4a6b4069f6b"
+  default     = "XXXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXX"
 }
 
 variable "network_interface_ids" {
@@ -33,12 +33,12 @@ variable "Create_Date" {
 
 variable "Project_name" {
   type        = string
-  default     = "Evwer"
+  default     = "Learning Purpose"
 }
 
 variable "Resource_Owner" {
   type        = string
-  default     = "Bhavin Shah"
+  default     = "Farajnazish Ansari"
 }
 
 variable "Sub_Business_Unit" {
@@ -50,7 +50,7 @@ variable "Sub_Business_Unit" {
 
 variable "resource_group_name" {
   type        = string
-  default     = "sa1_dev_eic_ip_implementation"
+  default     = "sa1_test_eic_FarajAnsari"
 }
 
 variable "vm_size" {
@@ -87,12 +87,12 @@ variable "vm_hostname" {
 
 variable "admin_username" {
   type        = string
-  default     = "evwereic"
+  default     = "faraz"
 }
 
 variable "admin_password" {
   type        = string
-  default     = "Admin@123"
+  default     = "Faraz@123"
 }
 
 #########################
@@ -106,7 +106,7 @@ variable "disable_password_authentication" {
 
 variable "key_data" {
   type        = string
-  default     = "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQDZUjeQnOees4DdEtg5003aS2C9WPQHTyyZDGORYqw1T/nFeriW7lTygARaZ121YOyzGIynPNitjvKe+PH5TdGtug4I92x7shYv1bT00S6F083pUj094ZyAlcS8J0xe37sdEvIAfc6qXVcD4MWxusFHRBviraP1bdGuxeTZNdZH5Y20iZgC9Sipf/s74vm6ySdsSKgekE9/LlumAXdjqmf6OSYcvP4TA8ziXxOtDv1/qh67yFmimi9Pvw6Yt5Ky39RvcDkljInRC+ZFWZh8S/wO0Yn+Z5rlqboeg2hOe3mefcTNGKi2EL31Ymo3+xMM7b0oYCTF6Uz14ZeW2ARLV6u66iaLvF+jjlgnOkVLXZmMTzgh0hrNBP7Y1qvHR3mhU8+QDBLAN1EkUwSj0rMx+hVuUTfLAFhe2tvjFqMAIDXG6b+blEftHVudORyMKQ/qbU2L58rhuDMAnUlyMiyoEWO/gkpaI3Pn7QGB+4+NBpPqPny3wiNDsdELGh/RDGbDDTU= generated-by-azure"
+  default     = "ssh-rsa AAAAB3NzaC1yXXXXXXXXXXXXXXXXQDZUjeQnOees4DdEtg5003aS2C9WPQHTyyZDGORYqw1T/nFeriW7lTygARaZ121YOyzGIynPNitjvKe+PH5TdGtug4I92x7shYv1bT00S6F083pUj09XXXXXXXXXXXXfc6qXVcD4MWxusFHRBviraP1bdGuxeTZNdZH5Y20iZgC9Sipf/s74vm6ySdsSKgekE9/LlumAXdjqmf6OSYcvP4XXXXXXXXXXmi9Pvw6Yt5Ky39RvcDkljInRC+ZFWZh8S/wO0Yn+Z5rlqboeg2hOe3mefcTNGKi2EL31Ymo3+xMM7b0oYCTF6Uz14ZeW2ARLV6u66iaLvF+jjlgnOkVLXZmMTzgh0hrNBP7Y1qvHR3mhU8+QDBLAN1EkUwSj0rMx+hVuUTfLAFhe2tvjFqMAIDXG6b+blEftHVudORyMKQ/qbU2L58rhuDMAnUlyMiyoEWO/gkpaI3Pn7QGB+4+NBpPqPny3wiNDsdELGh/RDGbDDTU= generated-by-azure"
 }
 
 variable "path" {
@@ -175,5 +175,5 @@ variable "write_accelerator_enabled" {
 
 variable "storage_os_disk_name" {
   type        = string
-  default     = "sa18swapdDisk"
+  default     = "FarazDisk"
 }

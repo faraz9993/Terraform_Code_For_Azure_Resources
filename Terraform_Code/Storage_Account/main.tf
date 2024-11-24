@@ -1,6 +1,6 @@
 provider "azurerm" {
   features {}
-  subscription_id = "664b6097-19f2-42a3-be95-a4a6b4069f6b"
+  subscription_id = "XXXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXX"
   resource_provider_registrations = "none"
 }
 resource "azurerm_storage_account" "sa1deveicipimplemen8ad4" {

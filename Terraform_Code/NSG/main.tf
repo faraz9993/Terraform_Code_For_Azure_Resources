@@ -90,8 +90,8 @@ resource "azurerm_network_security_group" "sa18swapd-nsg" {
     tags                = {
         " Business Unit"    = "Einfochips"
         "Create date"       = "11/10/2024"
-        "Project name"      = "Evwer"
-        "Resource Owner"    = "Bhavin Shah"
+        "Project name"      = "Learning Purpose"
+        "Resource Owner"    = "Farajnazish Ansari"
         "Sub Business Unit" = "PES- Digital"
     }
 }

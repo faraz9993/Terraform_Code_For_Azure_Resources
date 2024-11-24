@@ -1,0 +1,5 @@
+name                 = "faraz-aks-cluster"
+resource_group_name  = "sa1_test_eic_FarajAnsari"
+node_resource_group  = "sa1_test_eic_FarajAnsari"
+dns_prefix           = "faraz-dns"
+node_pool_name       = "Faraz"

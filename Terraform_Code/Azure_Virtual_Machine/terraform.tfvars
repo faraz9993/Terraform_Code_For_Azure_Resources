@@ -1,5 +1,5 @@
-subscription_id       = "664b6097-19f2-42a3-be95-a4a6b4069f6b"
+subscription_id       = "XXXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXX"
 location              = "southeastasia"
 name                  = "Virtual Machine"
-resource_group_name   = "sa1_dev_eic_ip_implementation"
+resource_group_name   = "sa1_test_eic_FarajAnsari"
 vm_size               = "Standard_B2ms"

@@ -1,7 +1,7 @@
 variable "subscription_id" {
   description = "Azure Subscription ID"
   type        = string
-  default     = "664b6097-19f2-42a3-be95-a4a6b4069f6b"
+  default     = "XXXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXX"
 }
 
 variable "name" {
@@ -11,7 +11,7 @@ variable "name" {
 
 variable "resource_group_name" {
   type        = string
-  default     = "sa1_dev_eic_ip_implementation"
+  default     = "sa1_test_eic_FarajAnsari"
 }
 
 variable "location" {
@@ -26,7 +26,7 @@ variable "sku_name" {
 
 variable "tenant_id" {
   type        = string
-  default     = "0adb040b-ca22-4ca6-9447-ab7b049a22ff"
+  default     = "XXXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXX"
 }
 
 variable "bypass" {

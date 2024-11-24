@@ -10,10 +10,10 @@ variable "location" {
 
 variable "name" {
   type        = string
-  default     = "sa18swapd-nsg"
+  default     = "Faraz-nsg"
 }
 
 variable "resource_group_name" {
   type        = string
-  default     = "sa1_dev_eic_ip_implementation"
+  default     = "sa1_test_eic_FarajAnsari"
 }

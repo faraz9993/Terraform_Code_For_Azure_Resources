@@ -30,7 +30,7 @@ variable "min_tls_version" {
 
 variable "name" {
   type        = string
-  default     = "sa18swapdstorageaccount"
+  default     = "farazstorageaccount"
 }
 
 
@@ -41,7 +41,7 @@ variable "queue_encryption_key_type" {
 
 variable "resource_group_name" {
   type        = string
-  default     = "sa1_dev_eic_ip_implementation"
+  default     = "sa1_test_eic_FarajAnsari"
 }
 
 variable "table_encryption_key_type" {
