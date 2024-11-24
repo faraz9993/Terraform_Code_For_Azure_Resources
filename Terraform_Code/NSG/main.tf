@@ -4,7 +4,7 @@ provider "azurerm" {
   resource_provider_registrations = "none"
 }
 
-resource "azurerm_network_security_group" "sa18swapd-nsg" {
+resource "azurerm_network_security_group" "faraz-nsg" {
     location            = var.location
     name                = var.name
     resource_group_name = var.resource_group_name
