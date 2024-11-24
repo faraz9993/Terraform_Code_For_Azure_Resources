@@ -25,7 +25,7 @@ variable "location" {
 
 variable "name" {
   type        = string
-  default     = "Sa1acrind"
+  default     = "farajnazish ansari"
 }
 
 variable "network_rule_bypass_option" {
@@ -64,7 +64,7 @@ variable "Business_Unit" {
 
 variable "Owner" {
   type        = string
-  default     = "Bhavin Shah"
+  default     = "Farajnazish Ansari"
 }
 
 variable "Create_date" {
@@ -74,12 +74,12 @@ variable "Create_date" {
 
 variable "Delivery_Manager" {
   type        = string
-  default     = "Bhavin Shah"
+  default     = "Farajnazish Ansari"
 }
 
 variable "Project_Name" {
   type        = string
-  default     = "Evwer"
+  default     = "Learning Purpose"
 }
 
 variable "trust_policy_enabled" {
