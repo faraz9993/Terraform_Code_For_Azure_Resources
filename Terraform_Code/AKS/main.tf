@@ -98,5 +98,4 @@ resource "azurerm_kubernetes_cluster" "cluster1" {
             outbound_ports_allocated    = 0         # keep this hard-coded
         }
     }
-    
 }
