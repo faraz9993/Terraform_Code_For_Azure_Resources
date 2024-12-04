@@ -4,11 +4,11 @@
 
 provider "azurerm" {
   features {}
-  subscription_id = "XXXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXX"
+  subscription_id = "664b6097-19f2-42a3-be95-a4a6b4069f6b"
   resource_provider_registrations = "none"
 }
 
-resource "azurerm_container_registry" "Sa1acrind" {
+resource "azurerm_container_registry" "FarazTestSa1acrind" {
     admin_enabled                 = var.admin_enabled
     anonymous_pull_enabled        = var.anonymous_pull_enabled
     data_endpoint_enabled         = var.data_endpoint_enabled
