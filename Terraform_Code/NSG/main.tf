@@ -1,10 +1,10 @@
 provider "azurerm" {
   features {}
   subscription_id = var.subscription_id
-  resource_provider_registrations = "none"
+  resource_provider_registrations = var.resource_provider_registrations
 }
 
-resource "azurerm_network_security_group" "faraz-nsg" {
+resource "azurerm_network_security_group" "Faraz-nsg" {
     location            = var.location
     name                = var.name
     resource_group_name = var.resource_group_name
@@ -88,10 +88,10 @@ resource "azurerm_network_security_group" "faraz-nsg" {
         }
     ]
     tags                = {
-        " Business Unit"    = "Einfochips"
-        "Create date"       = "11/10/2024"
-        "Project name"      = "Learning Purpose"
-        "Resource Owner"    = "Farajnazish Ansari"
-        "Sub Business Unit" = "PES- Digital"
+        " Business Unit"     = var.Business_unit
+        "Create date"       = var.Create_date
+        "Project name"      = var.Project_name
+        "Resource Owner"    = var.Resource_owner
+        "Sub Business Unit" = var.Sub_business_unit
     }
 }

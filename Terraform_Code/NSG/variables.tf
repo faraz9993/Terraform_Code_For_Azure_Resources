@@ -1,19 +1,39 @@
 variable "subscription_id" {
   type        = string
-  default     = "XXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXX"
+}
+
+variable "resource_provider_registrations" {
+  type        = string
 }
 
 variable "location" {
   type        = string
-  default     = "southeastasia"
 }
 
 variable "name" {
   type        = string
-  default     = "Faraz-nsg"
 }
 
 variable "resource_group_name" {
   type        = string
-  default     = "sa1_test_eic_FarajAnsari"
+}
+
+variable "Business_unit" {
+  type        = string
+}
+
+variable "Create_date" {
+  type        = string
+}
+
+variable "Project_name" {
+  type        = string
+}
+
+variable "Resource_owner" {
+  type        = string
+}
+
+variable "Sub_business_unit" {
+  type        = string
 }
