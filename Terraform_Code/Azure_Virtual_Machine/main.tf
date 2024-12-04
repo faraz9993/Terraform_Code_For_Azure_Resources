@@ -7,7 +7,7 @@ provider "azurerm" {
   resource_provider_registrations = "none"
 }
 
-resource "azurerm_virtual_machine" "Virtual Machine" {
+resource "azurerm_virtual_machine" "Faraz-test-vm" {
     count = 1
     location              = var.location
     name                  = var.name
